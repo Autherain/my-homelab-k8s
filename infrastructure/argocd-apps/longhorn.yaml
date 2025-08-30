@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: longhorn
+  namespace: argocd
+  labels:
+    app: longhorn
+    type: infrastructure
+    component: storage
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: infrastructure
+  source:
+    repoURL: https://charts.longhorn.io
+    chart: longhorn
+    targetRevision: 1.9.1
+    helm:
+    # references:  https://blog.datamasters.com.br/posts/kubernetes/longhorn-installation-with-argocd/
+    # https://www.reddit.com/r/kubernetes/comments/1hwietr/problem_with_adding_extensions_to_talos/
+      values: |
+        preUpgradeChecker:
+          jobEnabled: false
+          upgradeVersionCheck: false
+        service:
+          ui:
+            type: NodePort
+            nodePort: 30080
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: longhorn-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+      - CreateNamespace=true
