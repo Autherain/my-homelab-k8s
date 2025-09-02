@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traeffik-application
+  namespace: argocd
+  labels:
+    app: traeffik-application
+    type: infrastructure
+    component: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Autherain/my-homelab-k8s.git
+    targetRevision: HEAD
+    path: infrastructure/apps/traefik
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: traefik
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true

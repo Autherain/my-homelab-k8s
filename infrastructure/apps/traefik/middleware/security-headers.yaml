@@ -1,0 +1,18 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: security-headers
+  namespace: traefik
+spec:
+  headers:
+    frameDeny: true
+    sslRedirect: true
+    browserXssFilter: true
+    contentTypeNosniff: true
+    forceSTSHeader: true
+    stsIncludeSubdomains: true
+    stsPreload: true
+    stsSeconds: 31536000
+    customFrameOptionsValue: "SAMEORIGIN"
+    contentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+

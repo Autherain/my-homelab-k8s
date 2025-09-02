@@ -1,0 +1,10 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: rate-limit
+  namespace: traefik
+spec:
+  rateLimit:
+    burst: 100
+    average: 50
+

@@ -1,0 +1,42 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: traefik
+
+helmCharts:
+  - name: traefik
+    version: "37.0.0"
+    repo: https://traefik.github.io/charts
+    releaseName: traefik
+    valuesInline:
+      persistence:
+        enabled: true
+        storageClass: longhorn
+      certResolvers:
+        letsencrypt:
+          acme:
+            email: autherain@gmail.com
+            storage: persistence
+
+# Additional resources (middleware and secrets)
+resources:
+  - middleware/
+  - secrets/
+
+# Patches to modify Helm-generated resources if needed
+patches:
+  # Example: Patch the Traefik service to add annotations
+  - path: patches/service-patch.yaml
+    target:
+      name: traefik
+      kind: Service
+  # Example: Patch the Traefik deployment to add environment variables
+  - path: patches/deployment-patch.yaml
+    target:
+      name: traefik
+      kind: Deployment
+
+commonLabels:
+  app: traefik
+  type: infrastructure
+  component: traefik
